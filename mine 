@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VirgoFX Hub | Next-Gen Trading Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            DEFAULT: '#00d4ff',
+                            glow: '#00d4ff80',
+                        },
+                        dark: {
+                            900: '#0a0a0f',
+                            800: '#12121a',
+                            700: '#1a1a2e',
+                            600: '#252542',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'slide-up': 'slide-up 0.5s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 1, boxShadow: '0 0 20px rgba(0, 212, 255, 0.5)' },
+                            '50%': { opacity: .5, boxShadow: '0 0 40px rgba(0, 212, 255, 0.8)' },
+                        },
+                        'gradient-x': {
+                            '0%, 100%': { 'background-position': '0% 50%' },
+                            '50%': { 'background-position': '100% 50%' },
+                        },
+                        'slide-up': {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0a0f;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .glass-panel {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #00d4ff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-x 3s ease infinite;
+        }
+        
+        .hero-grid {
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .glow-point {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #00d4ff;
+            transition: width 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .trading-ticker {
+            animation: ticker 30s linear infinite;
+        }
+        
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .chart-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 2s ease-out forwards;
+        }
+        
+        @keyframes draw {
+            to { stroke-dashoffset: 0; }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="trending-up" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl tracking-tight">
+                        Virgo<span class="text-cyan-400">FX</span> Hub
+                    </span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="nav-link text-gray-300 hover:text-white transition-colors">Features</a>
+                    <a href="#terminal" class="nav-link text-gray-300 hover:text-white transition-colors">Terminal</a>
+                    <a href="#pricing" class="nav-link text-gray-300 hover:text-white transition-colors">Pricing</a>
+                    <a href="#testimonials" class="nav-link text-gray-300 hover:text-white transition-colors">Testimonials</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="hidden md:block text-gray-300 hover:text-white transition-colors">Sign In</button>
+                    <button class="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-6 py-2.5 rounded-full transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden hero-grid">
+        <div class="glow-point top-20 left-20 animate-pulse"></div>
+        <div class="glow-point bottom-20 right-20 animate-pulse" style="animation-delay: 1s;"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center space-x-2 glass-panel px-4 py-2 rounded-full mb-8 animate-slide-up">
+                <span class="flex h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span class="text-sm text-gray-300">New: AI Signal Engine 3.0 Now Live</span>
+            </div>
+            
+            <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight animate-slide-up" style="animation-delay: 0.1s;">
+                Trade the Future with <br>
+                <span class="gradient-text">Intelligence</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 animate-slide-up" style="animation-delay: 0.2s;">
+                Advanced charting, AI-powered signals, and seamless MT5 integration. 
+                The command center for serious traders.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up" style="animation-delay: 0.3s;">
+                <button class="group bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-8 py-4 rounded-full text-lg transition-all hover:scale-105 flex items-center space-x-2">
+                    <span>Launch Terminal</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                </button>
+                <button class="glass-panel hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all flex items-center space-x-2">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i>
+                    <span>Watch Demo</span>
+                </button>
+            </div>
+
+            <!-- Live Market Ticker -->
+            <div class="glass-panel rounded-2xl p-6 overflow-hidden animate-slide-up" style="animation-delay: 0.4s;">
+                <div class="flex space-x-8 trading-ticker whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">EUR/USD</span>
+                        <span class="text-green-400 font-mono">1.0845</span>
+                        <span class="text-green-400 text-sm">+0.32%</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">GBP/USD</span>
+                        <span class="text-red-400 font-mono">1.2632</span>
+                        <span class="text-red-400 text-sm">-0.15%</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">USD/JPY</span>
+                        <span class="text-green-400 font-mono">151.42</span>
+                        <span class="text-green-400 text-sm">+0.08%</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">XAU/USD</span>
+                        <span class="text-green-400 font-mono">2,234.80</span>
+                        <span class="text-green-400 text-sm">+0.45%</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">BTC/USD</span>
+                        <span class="text-green-400 font-mono">67,432.00</span>
+                        <span class="text-green-400 text-sm">+2.34%</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">ETH/USD</span>
+                        <span class="text-green-400 font-mono">3,521.60</span>
+                        <span class="text-green-400 text-sm">+1.89%</span>
+                    </div>
+                    <!-- Duplicate for seamless loop -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">EUR/USD</span>
+                        <span class="text-green-400 font-mono">1.0845</span>
+                        <span class="text-green-400 text-sm">+0.32%</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">GBP/USD</span>
+                        <span class="text-red-400 font-mono">1.2632</span>
+                        <span class="text-red-400 text-sm">-0.15%</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">USD/JPY</span>
+                        <span class="text-green-400 font-mono">151.42</span>
+                        <span class="text-green-400 text-sm">+0.08%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">
+                    Everything You Need to <span class="text-cyan-400">Dominate</span> Markets
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Professional-grade tools powered by cutting-edge AI and seamless broker integration.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-xl flex items-center justify-center mb-6 border border-cyan-500/30">
+                        <i data-lucide="brain" class="w-7 h-7 text-cyan-400"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">AI Signal Engine</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Machine learning algorithms analyze market patterns in real-time, delivering high-probability trade signals directly to your dashboard.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-500/20 to-pink-600/20 rounded-xl flex items-center justify-center mb-6 border border-purple-500/30">
+                        <i data-lucide="bar-chart-3" class="w-7 h-7 text-purple-400"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Advanced Charting</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Professional TradingView-powered charts with 100+ indicators, multi-timeframe analysis, and custom drawing tools.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-xl flex items-center justify-center mb-6 border border-green-500/30">
+                        <i data-lucide="link" class="w-7 h-7 text-green-400"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">MT5 Integration</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Seamless connection to MetaTrader 5. Execute trades, manage positions, and analyze performance across all your accounts.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="w-14 h-14 bg-gradient-to-br from-orange-500/20 to-red-600/20 rounded-xl flex items-center justify-center mb-6 border border-orange-500/30">
+                        <i data-lucide="zap" class="w-7 h-7 text-orange-400"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Real-Time Execution</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Sub-millisecond order execution with institutional-grade infrastructure. Never miss a market opportunity.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="w-14 h-14 bg-gradient-to-br from-pink-500/20 to-rose-600/20 rounded-xl flex items-center justify-center mb-6 border border-pink-500/30">
+                        <i data-lucide="shield" class="w-7 h-7 text-pink-400"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Risk Management</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Advanced position sizing calculators, auto stop-losses, and portfolio heat maps to protect your capital.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-xl flex items-center justify-center mb-6 border border-blue-500/30">
+                        <i data-lucide="globe" class="w-7 h-7 text-blue-400"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Multi-Asset Support</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Trade Forex, Crypto, Indices, and Commodities from a single interface. Diversify your portfolio effortlessly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terminal Preview Section -->
+    <section id="terminal" class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">
+                        Your Command Center <br>
+                        <span class="text-cyan-400">Awaits</span>
+                    </h2>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        Experience the next generation of trading interfaces. Our terminal combines the power of institutional platforms with the simplicity modern traders demand.
+                    </p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center space-x-3">
+                            <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                                <i data-lucide="check" class="w-4 h-4 text-cyan-400"></i>
+                            </div>
+                            <span class="text-gray-300">Customizable workspace layouts</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                                <i data-lucide="check" class="w-4 h-4 text-cyan-400"></i>
+                            </div>
+                            <span class="text-gray-300">One-click trading execution</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                                <i data-lucide="check" class="w-4 h-4 text-cyan-400"></i>
+                            </div>
+                            <span class="text-gray-300">Real-time news feed integration</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                                <i data-lucide="check" class="w-4 h-4 text-cyan-400"></i>
+                            </div>
+                            <span class="text-gray-300">Advanced order types (OCO, trailing stops)</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="bg-white text-black hover:bg-gray-200 font-bold px-8 py-4 rounded-full transition-all hover:scale-105">
+                        Explore Terminal
+                    </button>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl opacity-30 blur-xl"></div>
+                    <div class="relative glass-panel rounded-2xl border border-white/20 overflow-hidden">
+                        <div class="bg-dark-800 px-4 py-3 border-b border-white/10 flex items-center justify-between">
+                            <div class="flex space-x-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span class="text-xs text-gray-400">VirgoFX Terminal Pro</span>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <div class="text-2xl font-bold text-white">1.0845</div>
+                                    <div class="text-sm text-green-400 flex items-center">
+                                        <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                                        +0.32%
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-gray-400">EUR/USD</div>
+                                    <div class="text-xs text-gray-500">H1 Timeframe</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Simulated Chart -->
+                            <svg class="w-full h-48" viewBox="0 0 400 150">
+                                <defs>
+                                    <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0.3" />
+                                        <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 0,120 Q 50,110 100,100 T 200,80 T 300,60 T 400,40" 
+                                      fill="none" 
+                                      stroke="#06b6d4" 
+                                      stroke-width="2"
+                                      class="chart-line"/>
+                                <path d="M 0,120 Q 50,110 100,100 T 200,80 T 300,60 T 400,40 L 400,150 L 0,150 Z" 
+                                      fill="url(#chartGradient)"/>
+                                <!-- Signal markers -->
+                                <circle cx="100" cy="100" r="4" fill="#10b981" class="animate-pulse"/>
+                                <circle cx="300" cy="60" r="4" fill="#10b981" class="animate-pulse"/>
+                            </svg>
+                            
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <button class="bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/50 py-3 rounded-lg font-semibold transition-colors">
+                                    BUY
+                                </button>
+                                <button class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/50 py-3 rounded-lg font-semibold transition-colors">
+                                    SELL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 border-y border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="font-display text-4xl md:text-5xl font-bold text-cyan-400 mb-2">$2.4B+</div>
+                    <div class="text-gray-400">Monthly Volume</div>
+                </div>
+                <div>
+                    <div class="font-display text-4xl md:text-5xl font-bold text-purple-400 mb-2">50K+</div>
+                    <div class="text-gray-400">Active Traders</div>
+                </div>
+                <div>
+                    <div class="font-display text-4xl md:text-5xl font-bold text-pink-400 mb-2">99.9%</div>
+                    <div class="text-gray-400">Uptime</div>
+                </div>
+                <div>
+                    <div class="font-display text-4xl md:text-5xl font-bold text-green-400 mb-2">24/7</div>
+                    <div class="text-gray-400">Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-display text-4xl md:text-5xl font-bold text-center mb-16">
+                Trusted by <span class="gradient-text">Elite Traders</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        "The AI signals are incredibly accurate. I've increased my win rate by 40% since switching to VirgoFX Hub. The MT5 integration is seamless."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center font-bold">
+                            JM
+                        </div>
+                        <div class="ml-3">
+                            <div class="font-semibold">James Mitchell</div>
+                            <div class="text-sm text-gray-400">Forex Trader, London</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        "Finally, a platform that understands serious traders. The risk management tools alone are worth the subscription. Highly recommended."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center font-bold">
+                            SC
+                        </div>
+                        <div class="ml-3">
+                            <div class="font-semibold">Sarah Chen</div>
+                            <div class="text-sm text-gray-400">Day Trader, Singapore</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-8 border border-white/10">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        "The execution speed is unmatched. I can scalp the markets with confidence knowing my orders fill instantly. Game changer."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center font-bold">
+                            AR
+                        </div>
+                        <div class="ml-3">
+                            <div class="font-semibold">Alex Rodriguez</div>
+                            <div class="text-sm text-gray-400">Crypto Trader, Miami</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-cyan-600/20 to-purple-600/20"></div>
+        <div class="absolute inset-0 hero-grid opacity-30"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="font-display text-4xl md:text-6xl font-bold mb-6">
+                Ready to Elevate Your Trading?
+            </h2>
+            <p class="text-xl text-gray-300 mb-10">
+                Join 50,000+ traders who have already made the switch to intelligent trading.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button class="w-full sm:w-auto bg-cyan-400 hover:bg-cyan-300 text-black font-bold px-10 py-5 rounded-full text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(34,211,238,0.5)]">
+                    Start Free Trial
+                </button>
+                <button class="w-full sm:w-auto glass-panel hover:bg-white/10 text-white font-semibold px-10 py-5 rounded-full text-lg transition-all">
+                    Contact Sales
+                </button>
+            </div>
+            <p class="mt-6 text-sm text-gray-400">14-day free trial • No credit card required • Cancel anytime</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-2">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="font-display font-bold text-xl">
+                            Virgo<span class="text-cyan-400">FX</span> Hub
+                        </span>
+                    </div>
+                    <p class="text-gray-400 mb-6 max-w-sm">
+                        The next-generation trading command center. Advanced charting, AI signals, and seamless execution for serious traders.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <i data-lucide="twitter" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <i data-lucide="linkedin" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <i data-lucide="instagram" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <i data-lucide="youtube" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Product</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">Terminal</a></li>
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Company</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-cyan-400 transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">
+                    © 2025 VirgoFX Hub. All rights reserved.
+                </p>
+                <div class="flex space-x-6 text-sm text-gray-500">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-white transition-colors">Risk Disclosure</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add scroll effect to navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-lg');
+                nav.classList.add('bg-dark-900/90');
+            } else {
+                nav.classList.remove('shadow-lg');
+                nav.classList.remove('bg-dark-900/90');
+            }
+        });
+    </script>
+</body>
+</html>
